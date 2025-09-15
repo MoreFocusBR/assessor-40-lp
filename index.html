@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessor 4.0 | Monitoramento de Performance Inteligente</title>
+    <meta name="description" content="Transforme sua assessoria de investimentos com monitoramento de performance em tempo real, relatórios automatizados e análise avançada de carteiras.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzEzNDNBNCIvPgo8cGF0aCBkPSJNOCAxMkgxNlYyMEg4VjEyWiIgZmlsbD0iIzM5OEVGNyIvPgo8cGF0aCBkPSJNMTggMTJIMjRWMjBIMThWMTJaIiBmaWxsPSIjMzk4RUY3Ii8+CjxwYXRoIGQ9Ik04IDhIMjRWMTBIOFY4WiIgZmlsbD0iI0Y5RkJGRiIvPgo8L3N2Zz4K">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Parallax Background */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            will-change: transform;
+        }
+        
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .floating-element:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-element:nth-child(2) {
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .floating-element:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .header.scrolled {
+            background: rgba(15, 23, 42, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover .logo-icon {
+            transform: rotate(5deg);
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slideInUp 1s ease-out 0.2s forwards;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideInUp 1s ease-out 0.4s forwards;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideInUp 1s ease-out 0.6s forwards;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-secondary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.02);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slideInUp 1s ease-out 0.8s forwards;
+            transition: transform 0.3s ease;
+        }
+        
+        .dashboard-preview:hover {
+            transform: translateY(-10px);
+        }
+        
+        .dashboard-mockup {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mockup-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; animation-delay: 0.2s; }
+        .dot-green { background: #10b981; animation-delay: 0.4s; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .mockup-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .metric-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .metric-card:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 0.25rem;
+            animation: countUp 2s ease-out 1s forwards;
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            color: #cbd5e1;
+        }
+        
+        /* Scroll Reveal Animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scroll-reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .scroll-reveal-left.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .scroll-reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .scroll-reveal-right.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .scroll-reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .scroll-reveal-scale.revealed {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+            background: rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: #cbd5e1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.8s;
+        }
+        
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+        
+        .feature-description {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        
+        .feature-highlight {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        /* Benefits Section */
+        .benefits {
+            padding: 6rem 0;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .benefit-item {
+            text-align: center;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .benefit-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .benefit-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+            animation: countUp 2s ease-out forwards;
+        }
+        
+        .benefit-text {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+        
+        /* Testimonial */
+        .testimonial {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8rem;
+            color: rgba(59, 130, 246, 0.2);
+            font-family: serif;
+        }
+        
+        .testimonial-quote {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .testimonial-author {
+            color: #3b82f6;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta-form {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            margin-top: 3rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .cta-form:hover {
+            transform: translateY(-5px);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .form-button {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .form-button:hover::before {
+            left: 100%;
+        }
+        
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* AI Chat Modal */
+        .ai-chat-trigger {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            animation: pulse-ring 2s infinite;
+        }
+        
+        .ai-chat-trigger:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+        
+        .ai-chat-modal {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 400px;
+            height: 500px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            z-index: 1002;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideInUp 0.3s ease-out;
+        }
+        
+        .ai-chat-modal.active {
+            display: flex;
+        }
+        
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .chat-close {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            animation: messageSlide 0.3s ease-out;
+        }
+        
+        .message.ai {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            align-self: flex-start;
+        }
+        
+        .message.user {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            align-self: flex-end;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .chat-send {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-send:hover {
+            transform: scale(1.05);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #3b82f6;
+            border-radius: 50%;
+            animation: typingDot 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingDot {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
+        
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 6rem 0 3rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .dashboard-preview {
+                padding: 1rem;
+            }
+            
+            .mockup-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-chat-modal {
+                width: calc(100vw - 40px);
+                right: 20px;
+                left: 20px;
+            }
+            
+            .ai-chat-trigger {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+        
+        /* Initial Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes countUp {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Parallax Background -->
+    <div class="parallax-bg"></div>
+    
+    <!-- Floating Elements -->
+    <div class="floating-element">
+        <i data-lucide="trending-up" size="40" color="#3b82f6"></i>
+    </div>
+    <div class="floating-element">
+        <i data-lucide="bar-chart-3" size="40" color="#8b5cf6"></i>
+    </div>
+    <div class="floating-element">
+        <i data-lucide="pie-chart" size="40" color="#10b981"></i>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav container">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <i data-lucide="bar-chart-3" size="20" color="white"></i>
+                </div>
+                Assessor 4.0
+            </a>
+            <a href="#contato" class="cta-button">Solicitar Demo</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Sua assessoria no piloto automático.</h1>
+                <p>Monitore performance em tempo real, gere relatórios automatizados e demonstre valor aos seus clientes com a plataforma mais avançada do mercado.</p>
+                
+                <div class="hero-buttons">
+                    <a href="#demo" class="btn-primary">
+                        <i data-lucide="play-circle" size="20"></i>
+                        Ver Demo Gratuita
+                    </a>
+                    <a href="#funcionalidades" class="btn-secondary">Conhecer Funcionalidades</a>
+                </div>
+                
+                <div class="dashboard-preview">
+                    <div class="dashboard-mockup">
+                        <div class="mockup-header">
+                            <div class="mockup-dot dot-red"></div>
+                            <div class="mockup-dot dot-yellow"></div>
+                            <div class="mockup-dot dot-green"></div>
+                        </div>
+                        <div class="mockup-content">
+                            <div class="metric-card">
+                                <div class="metric-value">R$ 1.8M</div>
+                                <div class="metric-label">Patrimônio Total</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">15.13%</div>
+                                <div class="metric-label">Rentabilidade</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">1.79</div>
+                                <div class="metric-label">Sharpe Ratio</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">-5.23%</div>
+                                <div class="metric-label">Max Drawdown</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="funcionalidades">
+        <div class="container">
+            <div class="section-header scroll-reveal">
+                <h2 class="section-title">Uma Plataforma, Múltiplos Benefícios</h2>
+                <p class="section-subtitle">Veja como transformamos sua assessoria de investimentos.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card scroll-reveal-left">
+                    <div class="feature-icon">
+                        <i data-lucide="trending-up" size="28" color="white"></i>
+                    </div>
+                    <h3 class="feature-title">Monitoramento em Tempo Real</h3>
+                    <p class="feature-description">
+                        Dashboard completo com KPIs atualizados automaticamente. 
+                        <span class="feature-highlight">Sharpe Ratio, volatilidade, drawdown</span> 
+                        e comparação com benchmarks em uma interface intuitiva.
+                    </p>
+                </div>
+                
+                <div class="feature-card scroll-reveal-scale">
+                    <div class="feature-icon">
+                        <i data-lucide="file-text" size="28" color="white"></i>
+                    </div>
+                    <h3 class="feature-title">Relatórios Automatizados</h3>
+                    <p class="feature-description">
+                        Gere relatórios profissionais em PDF com 
+                        <span class="feature-highlight">um clique</span>. 
+                        Economize horas de trabalho manual e impressione seus clientes.
+                    </p>
+                </div>
+                
+                <div class="feature-card scroll-reveal-right">
+                    <div class="feature-icon">
+                        <i data-lucide="upload" size="28" color="white"></i>
+                    </div>
+                    <h3 class="feature-title">Importação Inteligente</h3>
+                    <p class="feature-description">
+                        Faça upload de PDFs de posições e nossa IA extrai automaticamente os dados. 
+                        <span class="feature-highlight">Cadastro automático</span> 
+                        de novos clientes e análise temporal.
+                    </p>
+                </div>
+                
+                <div class="feature-card scroll-reveal-left">
+                    <div class="feature-icon">
+                        <i data-lucide="users" size="28" color="white"></i>
+                    </div>
+                    <h3 class="feature-title">Gestão de Clientes</h3>
+                    <p class="feature-description">
+                        Organize todos os seus clientes em um só lugar. 
+                        Histórico completo de posições e 
+                        <span class="feature-highlight">evolução patrimonial</span> 
+                        para cada investidor.
+                    </p>
+                </div>
+                
+                <div class="feature-card scroll-reveal-scale">
+                    <div class="feature-icon">
+                        <i data-lucide="bell" size="28" color="white"></i>
+                    </div>
+                    <h3 class="feature-title">Sistema de Alertas</h3>
+                    <p class="feature-description">
+                        Receba notificações inteligentes sobre 
+                        <span class="feature-highlight">oportunidades de rebalanceamento</span>, 
+                        performance excepcional ou necessidade de atenção.
+                    </p>
+                </div>
+                
+                <div class="feature-card scroll-reveal-right">
+                    <div class="feature-icon">
+                        <i data-lucide="shield-check" size="28" color="white"></i>
+                    </div>
+                    <h3 class="feature-title">Segurança Total</h3>
+                    <p class="feature-description">
+                        Autenticação JWT, criptografia de dados e 
+                        <span class="feature-highlight">conformidade LGPD</span>. 
+                        Seus dados e de seus clientes sempre protegidos.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="container">
+            <div class="section-header scroll-reveal">
+                <h2 class="section-title">Resultados Comprovados</h2>
+                <p class="section-subtitle">Assessores que usam nossa plataforma relatam:</p>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-item scroll-reveal">
+                    <div class="benefit-number">70%</div>
+                    <div class="benefit-text">Redução no tempo de preparação de relatórios</div>
+                </div>
+                
+                <div class="benefit-item scroll-reveal">
+                    <div class="benefit-number">3x</div>
+                    <div class="benefit-text">Mais clientes atendidos com a mesma equipe</div>
+                </div>
+                
+                <div class="benefit-item scroll-reveal">
+                    <div class="benefit-number">95%</div>
+                    <div class="benefit-text">Satisfação dos clientes com relatórios</div>
+                </div>
+                
+                <div class="benefit-item scroll-reveal">
+                    <div class="benefit-number">30 dias</div>
+                    <div class="benefit-text">Para implementação completa</div>
+                </div>
+            </div>
+            
+            <div class="testimonial scroll-reveal-scale">
+                <p class="testimonial-quote">
+                    "O Assessor 4.0 revolucionou nossa operação. Conseguimos atender mais clientes com relatórios muito mais profissionais. O ROI foi imediato."
+                </p>
+                <p class="testimonial-author">
+                    Marina Silva, Sócia na Investimentos Premium
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contato">
+        <div class="container">
+            <div class="cta-content">
+                <div class="section-header scroll-reveal">
+                    <h2 class="section-title">Pronto para transformar sua assessoria?</h2>
+                    <p class="section-subtitle">
+                        Solicite uma demonstração gratuita e veja como o Assessor 4.0 pode 
+                        revolucionar sua operação em apenas 30 dias.
+                    </p>
+                </div>
+                
+                <div class="cta-form scroll-reveal-scale">
+                    <h3 style="margin-bottom: 1.5rem; color: #ffffff;">Fale com um especialista</h3>
+                    <form id="contact-form">
+                        <div class="form-grid">
+                            <input type="text" class="form-input" placeholder="Nome Completo" required>
+                            <input type="email" class="form-input" placeholder="Email Profissional" required>
+                            <input type="tel" class="form-input" placeholder="Telefone / WhatsApp" required>
+                            <input type="text" class="form-input" placeholder="Empresa / Assessoria" required>
+                        </div>
+                        <button type="submit" class="form-button">
+                            Solicitar Demonstração Gratuita
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Assessor 4.0. Todos os direitos reservados.</p>
+                <p>Plataforma Inteligente para Monitoramento de Performance.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Chat Trigger -->
+    <div class="ai-chat-trigger" id="aiChatTrigger">
+        <i data-lucide="message-circle" size="24" color="white"></i>
+    </div>
+
+    <!-- AI Chat Modal -->
+    <div class="ai-chat-modal" id="aiChatModal">
+        <div class="chat-header">
+            <div class="chat-title">
+                <i data-lucide="bot" size="20" color="#3b82f6"></i>
+                Assistente IA - Assessor 4.0
+            </div>
+            <button class="chat-close" id="chatClose">
+                <i data-lucide="x" size="20"></i>
+            </button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai">
+                Olá! Sou o assistente virtual do Assessor 4.0. Como posso ajudar você a transformar sua assessoria de investimentos hoje?
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua pergunta...">
+            <button class="chat-send" id="chatSend">
+                <i data-lucide="send" size="16"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Parallax effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.parallax-bg');
+            const speed = scrolled * 0.5;
+            parallax.style.transform = `translateY(${speed}px)`;
+            
+            // Header background on scroll
+            const header = document.querySelector('.header');
+            if (scrolled > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all scroll-reveal elements
+        document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Form submission
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const button = this.querySelector('.form-button');
+            const originalText = button.textContent;
+            
+            button.textContent = 'Enviando...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                alert('Obrigado! Entraremos em contato em breve para agendar sua demonstração.');
+                this.reset();
+                button.textContent = originalText;
+                button.disabled = false;
+            }, 2000);
+        });
+        
+        // AI Chat functionality
+        const aiChatTrigger = document.getElementById('aiChatTrigger');
+        const aiChatModal = document.getElementById('aiChatModal');
+        const chatClose = document.getElementById('chatClose');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+        
+        // Predefined responses
+        const aiResponses = {
+            'ola': 'Olá! Fico feliz em conversar com você. Como posso ajudar com sua assessoria de investimentos?',
+            'funcionalidades': 'O Assessor 4.0 oferece: Dashboard em tempo real, Relatórios automatizados, Importação de PDFs, Gestão de clientes, Sistema de alertas e Segurança total. Qual funcionalidade te interessa mais?',
+            'preco': 'Nossos planos são flexíveis e adaptados ao tamanho da sua operação. Que tal agendar uma demonstração gratuita para conhecer os valores? É só preencher o formulário na página!',
+            'demo': 'Perfeito! Para agendar sua demonstração gratuita, basta preencher o formulário de contato na página. Nossa equipe entrará em contato em até 24 horas.',
+            'relatorios': 'Nossos relatórios são gerados automaticamente em PDF com design profissional. Incluem todas as métricas importantes: performance, Sharpe Ratio, drawdown, comparação com benchmarks e muito mais!',
+            'seguranca': 'A segurança é nossa prioridade! Usamos autenticação JWT, criptografia de dados, conformidade LGPD e hospedagem em servidores seguros. Seus dados estão 100% protegidos.',
+            'implementacao': 'A implementação é super rápida! Em apenas 30 dias sua assessoria estará operando com o Assessor 4.0. Nossa equipe te acompanha em todo o processo.',
+            'suporte': 'Oferecemos suporte completo: treinamento da equipe, documentação detalhada, suporte técnico e atualizações constantes. Você nunca ficará sozinho!',
+            'default': 'Interessante! O Assessor 4.0 pode realmente transformar sua operação. Que tal agendar uma demonstração gratuita para ver tudo funcionando na prática?'
+        };
+        
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('olá') || lowerMessage.includes('ola') || lowerMessage.includes('oi')) {
+                return aiResponses.ola;
+            } else if (lowerMessage.includes('funcionalidade') || lowerMessage.includes('recurso')) {
+                return aiResponses.funcionalidades;
+            } else if (lowerMessage.includes('preço') || lowerMessage.includes('valor') || lowerMessage.includes('custo')) {
+                return aiResponses.preco;
+            } else if (lowerMessage.includes('demo') || lowerMessage.includes('demonstração')) {
+                return aiResponses.demo;
+            } else if (lowerMessage.includes('relatório') || lowerMessage.includes('report')) {
+                return aiResponses.relatorios;
+            } else if (lowerMessage.includes('segurança') || lowerMessage.includes('seguro')) {
+                return aiResponses.seguranca;
+            } else if (lowerMessage.includes('implementação') || lowerMessage.includes('instalação')) {
+                return aiResponses.implementacao;
+            } else if (lowerMessage.includes('suporte') || lowerMessage.includes('ajuda')) {
+                return aiResponses.suporte;
+            } else {
+                return aiResponses.default;
+            }
+        }
+        
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <i data-lucide="bot" size="16" color="#3b82f6"></i>
+                Digitando...
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            lucide.createIcons();
+        }
+        
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            addMessage(message, true);
+            chatInput.value = '';
+            
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = getAIResponse(message);
+                addMessage(response);
+            }, 1500);
+        }
+        
+        // Chat event listeners
+        aiChatTrigger.addEventListener('click', () => {
+            aiChatModal.classList.add('active');
+            chatInput.focus();
+        });
+        
+        chatClose.addEventListener('click', () => {
+            aiChatModal.classList.remove('active');
+        });
+        
+        chatSend.addEventListener('click', sendMessage);
+        
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Close chat when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!aiChatModal.contains(e.target) && !aiChatTrigger.contains(e.target)) {
+                aiChatModal.classList.remove('active');
+            }
+        });
+        
+        // Enhanced hover effects
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.03)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add some interactive particles on mouse move
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.98) {
+                createParticle(e.clientX, e.clientY);
+            }
+        });
+        
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.background = '#3b82f6';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '999';
+            particle.style.opacity = '0.7';
+            
+            document.body.appendChild(particle);
+            
+            const animation = particle.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 0.7 },
+                { transform: `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+    </script>
+</body>
+</html>
+

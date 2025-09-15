@@ -1328,43 +1328,43 @@
         const chatInput = document.getElementById('chatInput');
         const chatSend = document.getElementById('chatSend');
         
-        // Predefined responses
-        const aiResponses = {
-            'ola': 'Olá! Fico feliz em conversar com você. Como posso ajudar com sua assessoria de investimentos?',
-            'funcionalidades': 'O Assessor 4.0 oferece: Dashboard em tempo real, Relatórios automatizados, Importação de PDFs, Gestão de clientes, Sistema de alertas e Segurança total. Qual funcionalidade te interessa mais?',
-            'preco': 'Nossos planos são flexíveis e adaptados ao tamanho da sua operação. Que tal agendar uma demonstração gratuita para conhecer os valores? É só preencher o formulário na página!',
-            'demo': 'Perfeito! Para agendar sua demonstração gratuita, basta preencher o formulário de contato na página. Nossa equipe entrará em contato em até 24 horas.',
-            'relatorios': 'Nossos relatórios são gerados automaticamente em PDF com design profissional. Incluem todas as métricas importantes: performance, Sharpe Ratio, drawdown, comparação com benchmarks e muito mais!',
-            'seguranca': 'A segurança é nossa prioridade! Usamos autenticação JWT, criptografia de dados, conformidade LGPD e hospedagem em servidores seguros. Seus dados estão 100% protegidos.',
-            'implementacao': 'A implementação é super rápida! Em apenas 30 dias sua assessoria estará operando com o Assessor 4.0. Nossa equipe te acompanha em todo o processo.',
-            'suporte': 'Oferecemos suporte completo: treinamento da equipe, documentação detalhada, suporte técnico e atualizações constantes. Você nunca ficará sozinho!',
-            'default': 'Interessante! O Assessor 4.0 pode realmente transformar sua operação. Que tal agendar uma demonstração gratuita para ver tudo funcionando na prática?'
-        };
-        
-        function getAIResponse(message) {
-            const lowerMessage = message.toLowerCase();
-            
-            if (lowerMessage.includes('olá') || lowerMessage.includes('ola') || lowerMessage.includes('oi')) {
-                return aiResponses.ola;
-            } else if (lowerMessage.includes('funcionalidade') || lowerMessage.includes('recurso')) {
-                return aiResponses.funcionalidades;
-            } else if (lowerMessage.includes('preço') || lowerMessage.includes('valor') || lowerMessage.includes('custo')) {
-                return aiResponses.preco;
-            } else if (lowerMessage.includes('demo') || lowerMessage.includes('demonstração')) {
-                return aiResponses.demo;
-            } else if (lowerMessage.includes('relatório') || lowerMessage.includes('report')) {
-                return aiResponses.relatorios;
-            } else if (lowerMessage.includes('segurança') || lowerMessage.includes('seguro')) {
-                return aiResponses.seguranca;
-            } else if (lowerMessage.includes('implementação') || lowerMessage.includes('instalação')) {
-                return aiResponses.implementacao;
-            } else if (lowerMessage.includes('suporte') || lowerMessage.includes('ajuda')) {
-                return aiResponses.suporte;
-            } else {
-                return aiResponses.default;
+        // Generate a unique ID for this conversation session
+        const conversationId = 'user-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+
+        // Real function to call the n8n webhook
+        const fetchFromN8N = async (userMessage) => {
+            const webhookUrl = 'https://n8n.morefocus.com.br/webhook/b591dfc5-8cc3-48b5-a314-66dee3183838';
+            const errorMessage = 'Desculpe, ocorreu um erro. Tente novamente.';
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // Send message and the unique conversation ID
+                    body: JSON.stringify({ 
+                        message: userMessage,
+                        conversationId: conversationId 
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Webhook response error:', response.status, response.statusText);
+                    return errorMessage;
+                }
+                
+                // The n8n workflow now returns JSON, so we read it as json
+                const botResponseJson = await response.json();
+                // Return the text content from the 'output' key
+                return botResponseJson.output || errorMessage;
+
+            } catch (error) {
+                console.error('Error connecting to the webhook:', error);
+                return errorMessage;
             }
-        }
-        
+        };
+
         function addMessage(message, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
@@ -1372,7 +1372,24 @@
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-        
+
+        // This function now takes a plain text string, splits it into paragraphs,
+        // and creates a new styled bubble for each one.
+        const addBotResponse = (textString) => {
+            // Split the text by one or more newline characters
+            const paragraphs = textString.split(/\n+/).filter(p => p.trim() !== '');
+
+            // For each paragraph, create a new message bubble
+            paragraphs.forEach(paragraph => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message ai';
+                messageDiv.textContent = paragraph;
+                chatMessages.appendChild(messageDiv);
+            });
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
         function showTypingIndicator() {
             const typingDiv = document.createElement('div');
             typingDiv.className = 'typing-indicator';
@@ -1390,28 +1407,39 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
             lucide.createIcons();
         }
-        
+
         function hideTypingIndicator() {
             const typingIndicator = document.getElementById('typingIndicator');
             if (typingIndicator) {
                 typingIndicator.remove();
             }
         }
-        
+
+        const handleUserMessage = async (message) => {
+            if (!message.trim()) return;
+            
+            addMessage(message, true);
+            chatInput.value = '';
+            chatInput.disabled = true;
+
+            // Add a "typing" indicator
+            showTypingIndicator();
+
+            const botResponseText = await fetchFromN8N(message);
+            
+            // Remove typing indicator and add the real response
+            hideTypingIndicator();
+            addBotResponse(botResponseText);
+
+            chatInput.disabled = false;
+            chatInput.focus();
+        };
+
         function sendMessage() {
             const message = chatInput.value.trim();
             if (!message) return;
             
-            addMessage(message, true);
-            chatInput.value = '';
-            
-            showTypingIndicator();
-            
-            setTimeout(() => {
-                hideTypingIndicator();
-                const response = getAIResponse(message);
-                addMessage(response);
-            }, 1500);
+            handleUserMessage(message);
         }
         
         // Chat event listeners
@@ -1424,10 +1452,14 @@
             aiChatModal.classList.remove('active');
         });
         
-        chatSend.addEventListener('click', sendMessage);
+        chatSend.addEventListener('click', (e) => {
+            e.preventDefault();
+            sendMessage();
+        });
         
         chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 sendMessage();
             }
         });
